@@ -105,7 +105,14 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
             motion.userAcceleration.z + motion.gravity.z,
             motion.rotationRate.x,
             motion.rotationRate.y,
-            motion.rotationRate.z
+            motion.rotationRate.z,
+            motion.gravity.x,
+            motion.gravity.y,
+            motion.gravity.z,
+            motion.attitude.quaternion.x,
+            motion.attitude.quaternion.y,
+            motion.attitude.quaternion.z,
+            motion.attitude.quaternion.w
         ]
         guard values.allSatisfy(\.isFinite) else { return }
 
