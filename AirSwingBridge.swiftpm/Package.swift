@@ -25,10 +25,6 @@ let package = Package(
             capabilities: [
                 .motion(
                     purposeString: "AirSwing reads AirPods motion data to analyse table-tennis strokes."
-                ),
-                .localNetwork(
-                    purposeString: "AirSwing connects to the dashboard running on your local computer.",
-                    bonjourServiceTypes: []
                 )
             ],
             additionalInfoPlistContentFilePath: "Info.plist"
@@ -37,7 +33,8 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "AppModule",
-            path: "Sources/AppModule"
+            path: "Sources/AppModule",
+            resources: [.copy("Resources/Web")]
         )
     ]
 )

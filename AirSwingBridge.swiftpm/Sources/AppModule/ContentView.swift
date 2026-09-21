@@ -32,23 +32,23 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
         webView.backgroundColor = .black
     }
 
-    func loadDashboard(from address: String) {
-        guard let url = URL(string: address),
-              let scheme = url.scheme,
-              scheme == "http" || scheme == "https" else {
-            status = "服务器地址无效"
+    func loadDashboard() {
+        guard let url = Bundle.module.url(
+            forResource: "index",
+            withExtension: "html",
+            subdirectory: "Web"
+        ) else {
+            status = "找不到内置仪表盘"
             isPageReady = false
             return
         }
 
         isPageReady = false
-        status = "正在连接电脑网页"
-        let request = URLRequest(
-            url: url,
-            cachePolicy: .reloadIgnoringLocalCacheData,
-            timeoutInterval: 10
+        status = "正在加载离线仪表盘"
+        webView.loadFileURL(
+            url,
+            allowingReadAccessTo: url.deletingLastPathComponent()
         )
-        webView.load(request)
     }
 
     func toggleStreaming() {
@@ -90,7 +90,7 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
     func stopStreaming() {
         motionManager.stopDeviceMotionUpdates()
         isStreaming = false
-        status = isPageReady ? "已暂停传感器" : "网页未连接"
+        status = isPageReady ? "已暂停传感器" : "仪表盘未加载"
     }
 
     private func inject(_ motion: CMDeviceMotion) {
@@ -132,7 +132,7 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         isPageReady = true
-        status = "网页已连接，点开始传感器"
+        status = "离线仪表盘已就绪"
     }
 
     func webView(
@@ -153,7 +153,7 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
 
     private func reportNavigationError(_ error: Error) {
         isPageReady = false
-        status = "网页连接失败：\(error.localizedDescription)"
+        status = "仪表盘加载失败：\(error.localizedDescription)"
     }
 }
 
@@ -169,8 +169,6 @@ struct DashboardWebView: UIViewRepresentable {
 
 struct ContentView: View {
     @StateObject private var bridge = MotionBridge()
-    @AppStorage("dashboardURL") private var dashboardURL = "http://192.168.0.105:8001/"
-    @State private var isShowingSettings = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -186,20 +184,12 @@ struct ContentView: View {
                 Spacer()
 
                 Button {
-                    bridge.loadDashboard(from: dashboardURL)
+                    bridge.loadDashboard()
                 } label: {
                     Image(systemName: "arrow.clockwise")
                 }
                 .buttonStyle(.bordered)
                 .help("重新加载网页")
-
-                Button {
-                    isShowingSettings = true
-                } label: {
-                    Image(systemName: "gearshape")
-                }
-                .buttonStyle(.bordered)
-                .help("服务器设置")
 
                 Button(bridge.isStreaming ? "停止" : "开始传感器") {
                     bridge.toggleStreaming()
@@ -215,29 +205,7 @@ struct ContentView: View {
                 .ignoresSafeArea(edges: .bottom)
         }
         .onAppear {
-            bridge.loadDashboard(from: dashboardURL)
-        }
-        .sheet(isPresented: $isShowingSettings) {
-            NavigationStack {
-                Form {
-                    Section("电脑网页地址") {
-                        TextField("http://192.168.0.105:8001/", text: $dashboardURL)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                            .keyboardType(.URL)
-                    }
-                }
-                .navigationTitle("服务器设置")
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("连接") {
-                            bridge.loadDashboard(from: dashboardURL)
-                            isShowingSettings = false
-                        }
-                    }
-                }
-            }
-            .presentationDetents([.medium])
+            bridge.loadDashboard()
         }
     }
 }
