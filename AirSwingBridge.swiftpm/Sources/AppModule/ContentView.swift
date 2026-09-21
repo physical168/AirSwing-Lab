@@ -21,6 +21,7 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
     private var injectionPending = false
     private var lastInjectionTime: TimeInterval = 0
     private let minimumInjectionInterval: TimeInterval = 1.0 / 50.0
+    private var isOfflineDashboard = false
 
     override init() {
         let configuration = WKWebViewConfiguration()
@@ -32,7 +33,34 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
         webView.backgroundColor = .black
     }
 
-    func loadDashboard() {
+    func loadDashboard(mode: String, address: String) {
+        if mode == "computer" {
+            loadComputerDashboard(from: address)
+        } else {
+            loadOfflineDashboard()
+        }
+    }
+
+    private func loadComputerDashboard(from address: String) {
+        guard let url = URL(string: address),
+              let scheme = url.scheme,
+              scheme == "http" || scheme == "https" else {
+            status = "电脑地址无效"
+            isPageReady = false
+            return
+        }
+
+        isOfflineDashboard = false
+        isPageReady = false
+        status = "正在连接电脑网页"
+        webView.load(URLRequest(
+            url: url,
+            cachePolicy: .reloadIgnoringLocalCacheData,
+            timeoutInterval: 10
+        ))
+    }
+
+    private func loadOfflineDashboard() {
         guard let url = Bundle.main.url(
             forResource: "index",
             withExtension: "html",
@@ -44,6 +72,7 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
         }
 
         isPageReady = false
+        isOfflineDashboard = true
         status = "正在加载离线仪表盘"
         webView.loadFileURL(
             url,
@@ -132,7 +161,9 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         isPageReady = true
-        status = "离线版 v1.1 已就绪 · 13 项运动数据"
+        status = isOfflineDashboard
+            ? "离线备用页面已就绪 · 13 项数据"
+            : "电脑网页已连接 · 13 项数据"
     }
 
     func webView(
@@ -169,6 +200,13 @@ struct DashboardWebView: UIViewRepresentable {
 
 struct ContentView: View {
     @StateObject private var bridge = MotionBridge()
+    @AppStorage("dashboardMode") private var dashboardMode = "computer"
+    @AppStorage("dashboardURL") private var dashboardURL = "http://192.168.0.105:8001/"
+    @State private var isShowingSettings = false
+
+    private func loadDashboard() {
+        bridge.loadDashboard(mode: dashboardMode, address: dashboardURL)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -184,12 +222,20 @@ struct ContentView: View {
                 Spacer()
 
                 Button {
-                    bridge.loadDashboard()
+                    loadDashboard()
                 } label: {
                     Image(systemName: "arrow.clockwise")
                 }
                 .buttonStyle(.bordered)
                 .help("重新加载网页")
+
+                Button {
+                    isShowingSettings = true
+                } label: {
+                    Image(systemName: "gearshape")
+                }
+                .buttonStyle(.bordered)
+                .help("仪表盘设置")
 
                 Button(bridge.isStreaming ? "停止" : "开始传感器") {
                     bridge.toggleStreaming()
@@ -205,7 +251,42 @@ struct ContentView: View {
                 .ignoresSafeArea(edges: .bottom)
         }
         .onAppear {
-            bridge.loadDashboard()
+            loadDashboard()
+        }
+        .sheet(isPresented: $isShowingSettings) {
+            NavigationStack {
+                Form {
+                    Section("运行模式") {
+                        Picker("仪表盘", selection: $dashboardMode) {
+                            Text("连接电脑").tag("computer")
+                            Text("离线备用").tag("offline")
+                        }
+                        .pickerStyle(.segmented)
+                    }
+
+                    if dashboardMode == "computer" {
+                        Section("电脑网页地址") {
+                            TextField(
+                                "http://192.168.0.105:8001/",
+                                text: $dashboardURL
+                            )
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                            .keyboardType(.URL)
+                        }
+                    }
+                }
+                .navigationTitle("AirSwing 设置")
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("连接") {
+                            loadDashboard()
+                            isShowingSettings = false
+                        }
+                    }
+                }
+            }
+            .presentationDetents([.medium])
         }
     }
 }
