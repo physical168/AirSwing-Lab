@@ -33,7 +33,7 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
     }
 
     func loadDashboard() {
-        guard let url = Bundle.module.url(
+        guard let url = Bundle.main.url(
             forResource: "index",
             withExtension: "html",
             subdirectory: "Web"
