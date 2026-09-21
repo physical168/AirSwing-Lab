@@ -132,7 +132,7 @@ final class MotionBridge: NSObject, ObservableObject, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         isPageReady = true
-        status = "离线仪表盘已就绪"
+        status = "离线版 v1.1 已就绪 · 13 项运动数据"
     }
 
     func webView(

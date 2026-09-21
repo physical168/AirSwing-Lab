@@ -4,15 +4,15 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "AirSwing Bridge",
+    name: "AirSwing Lab Offline",
     platforms: [.iOS("17.0")],
     products: [
         .iOSApplication(
-            name: "AirSwing Bridge",
+            name: "AirSwing Lab Offline",
             targets: ["AppModule"],
-            bundleIdentifier: "com.physical168.airswing.bridge",
-            displayVersion: "1.0",
-            bundleVersion: "1",
+            bundleIdentifier: "com.physical168.airswing.offline",
+            displayVersion: "1.1",
+            bundleVersion: "2",
             appIcon: .placeholder(icon: .running),
             accentColor: .presetColor(.green),
             supportedDeviceFamilies: [.pad],
