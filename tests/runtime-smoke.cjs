@@ -99,10 +99,10 @@ for (let shot = 0; shot < 3; shot += 1) {
 if (!elements.summarySample.textContent.includes("0 次已标记") || elements.summaryInRate.textContent !== "--") {
   throw new Error("Unmarked strokes were incorrectly treated as landing results");
 }
-if (!elements.summaryPattern.textContent.includes("纯动作模式") || !elements.summaryRelation.textContent.includes("没有标记落点")) {
+if (!elements.summaryPattern.textContent.includes("从动作看") || !elements.summaryRelation.textContent.includes("还没有标落点")) {
   throw new Error("Motion-only session insights were not generated");
 }
-if (!elements.coachReliability.textContent.includes("仅动作结论")) {
+if (!elements.coachReliability.textContent.includes("只看动作")) {
   throw new Error("Unmarked latest-shot conclusion was not labelled motion-only");
 }
 console.log(`Runtime smoke OK: ${ids.length} elements, marked conclusions, and unmarked motion-only insights`);
