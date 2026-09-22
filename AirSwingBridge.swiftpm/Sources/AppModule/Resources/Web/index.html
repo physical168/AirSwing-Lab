@@ -15,6 +15,8 @@
 <article class="card"><div><div class="label">触球前稳定度</div><div class="value"><span id="stability">--</span><span class="unit">°</span></div></div><div class="hint">数值越小越稳定</div></article>
 <article class="card"><div><div class="label">峰值转速</div><div class="value"><span id="peakRot">0</span><span class="unit">°/s</span></div></div><div class="hint" id="peakHint">当前 0.00 g</div></article>
 <article class="card"><div><div class="label">实时拍面</div><div class="value"><span id="liveAngle">--</span><span class="unit">°</span></div></div><div class="hint" id="liveAngleHint">需要新版 iPad 网桥</div></article>
+<article class="card"><div><div class="label">拍面水平偏角</div><div class="value"><span id="horizontalFace">--</span><span class="unit">°</span></div></div><div class="hint" id="horizontalFaceHint">正值向右，负值向左</div></article>
+<article class="card"><div><div class="label">挥拍左右方向</div><div class="value"><span id="swingDirection">--</span><span class="unit">°</span></div></div><div class="hint" id="swingDirectionHint">旋转分量估计</div></article>
 <article class="card"><div><div class="label">击球判断</div><div class="value" id="contactState">等待</div></div><div class="hint">仅代表 IMU 击球候选</div></article>
 </div></div>
 <aside><section class="panel"><h2>训练 Session</h2><div class="stack"><div class="buttons"><button class="primary" id="startSession">开始训练</button><button id="endSession" disabled>结束并保存</button></div><div class="buttons"><button id="exportJson">导出当前 JSON</button><button id="exportCsv">导出逐拍 CSV</button></div><span class="protocol" id="protocolNotice">检测网桥数据版本中</span></div></section>
@@ -30,6 +32,6 @@
 <div class="cal-row"><div><strong>3. 球拍竖直</strong><span>拍柄向下，正手面朝球网，静止 2 秒</span></div><button id="calVertical">开始</button></div>
 <div class="buttons"><span class="tag" id="frontTag">正面</span><span class="tag" id="backTag">反面</span><span class="tag" id="verticalTag">竖直</span><button id="clearCalibration">清除</button></div></div></section>
 <section class="panel"><h2>状态</h2><div class="log" id="eventLog"></div></section></aside></section>
-<section class="panel records"><h2>Session 与逐拍记录</h2><div class="records-grid"><div class="session-list" id="sessionList"></div><div class="table-wrap"><table><thead><tr><th>击球</th><th>落点</th><th>时间</th><th>拍面角</th><th>目标差</th><th>轨迹角</th><th>稳定度</th><th>峰值 G</th><th>峰值转速</th></tr></thead><tbody id="hitTable"></tbody></table><div class="empty" id="emptyHits">选择或开始一个 Session</div></div></div></section>
+<section class="panel records"><h2>Session 与逐拍记录</h2><div class="records-grid"><div class="session-list" id="sessionList"></div><div class="table-wrap"><table><thead><tr><th>击球</th><th>落点</th><th>时间</th><th>拍面角</th><th>水平拍面</th><th>左右挥拍</th><th>目标差</th><th>轨迹角</th><th>稳定度</th><th>峰值 G</th><th>峰值转速</th></tr></thead><tbody id="hitTable"></tbody></table><div class="empty" id="emptyHits">选择或开始一个 Session</div></div></div></section>
 <section class="panel charts"><h2>最近 3 秒实时数据</h2><div class="charts-grid"><div class="mini-chart"><h3>冲击加速度 · g</h3><div class="chart-wrap"><canvas id="accelerationChart"></canvas></div></div><div class="mini-chart"><h3>角速度 · °/s</h3><div class="chart-wrap"><canvas id="rotationChart"></canvas></div></div><div class="mini-chart"><h3>拍面角度 · °</h3><div class="chart-wrap"><canvas id="angleChart"></canvas></div></div></div></section>
 </main><script src="detector.js"></script></body></html>
