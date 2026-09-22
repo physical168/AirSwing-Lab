@@ -32,6 +32,13 @@ The table-tennis dashboard provides:
 
 - Per-stroke face angle, horizontal face direction, swing-plane angle, and
   left/right swing direction estimates.
+- Per-stroke preparation-to-contact rotation, axial wrist rotation, backswing,
+  follow-through, return-to-ready, peak-speed timing, and detection confidence.
+- Estimated racket-head speed, pre-contact acceleration, follow-through
+  deceleration, and forward/lateral speed components using an adjustable
+  effective rotation radius (20 cm by default).
+- Gyroscope and linear-acceleration bias correction, a calibrated motion noise
+  floor, and optional automatic hit thresholds.
 - Session history, landing-zone marking, and JSON/CSV exports.
 - A responsive high-contrast UI with live acceleration, rotation, and face
   angle charts.
@@ -48,6 +55,11 @@ Keep the AirPod fixed to the racket handle cap throughout calibration and play.
 5. Lay it forehand-side up with the racket head pointing along the table
    centerline toward the net.
 6. Hold the player's normal ready pose for the personal pose reference.
+
+The speed values are rotational estimates (`angular velocity x effective
+radius`), not measured ball speed or full 3D racket translation. Detection
+confidence describes how strongly a candidate matches the IMU hit signature;
+it is not a score for stroke quality.
 
 ## Notes
 
