@@ -13,32 +13,41 @@ table-tennis racket handle cap.
 - Development loop: the PC edits and serves the web UI; the iPad WebKit shell
   reloads the page for fast iteration.
 
-## First Prototype Target
+## Current Prototype
 
-The web page should expose:
+The iPad bridge injects acceleration, rotation rate, gravity, and attitude:
 
 ```js
-window.onSensorData = function (accX, accY, accZ, rotX, rotY, rotZ) {
-  // high-frequency IMU samples injected by the native iPad bridge
+window.onSensorData = function (
+  accX, accY, accZ,
+  rotX, rotY, rotZ,
+  gravityX, gravityY, gravityZ,
+  quaternionX, quaternionY, quaternionZ, quaternionW
+) {
+  // High-frequency AirPods motion samples from the iPad bridge.
 };
 ```
 
-Initial detection logic:
+The table-tennis dashboard provides:
 
-- `totalG = Math.sqrt(accX ** 2 + accY ** 2 + accZ ** 2)`
-- `totalRot = Math.abs(rotX) + Math.abs(rotY) + Math.abs(rotZ)`
-- Badminton hit: `totalG > 7.0`, cooldown over `250ms`
-- Table tennis hit: `totalG > 2.8 && totalRot > 3.5`, cooldown over `180ms`
+- Per-stroke face angle, horizontal face direction, swing-plane angle, and
+  left/right swing direction estimates.
+- Session history, landing-zone marking, and JSON/CSV exports.
+- A responsive high-contrast UI with live acceleration, rotation, and face
+  angle charts.
+- A hybrid iPad shell that loads the LAN dashboard and keeps an offline copy.
 
-Initial UI:
+## Calibration Order
 
-- High-contrast, large text for court-side visibility.
-- Current mode.
-- Total hit count.
-- Maximum impact in g.
-- Real-time wrist rotation speed.
-- Audio beep and visual flash on hit detection.
-- Chart.js line chart for the last 3 seconds of acceleration.
+Keep the AirPod fixed to the racket handle cap throughout calibration and play.
+
+1. Rest the racket forehand-side up for three seconds to measure sensor bias.
+2. Rest it forehand-side up for the face reference.
+3. Rest it backhand-side up for the opposite face reference.
+4. Hold it vertical, handle down and forehand face toward the net.
+5. Lay it forehand-side up with the racket head pointing along the table
+   centerline toward the net.
+6. Hold the player's normal ready pose for the personal pose reference.
 
 ## Notes
 
