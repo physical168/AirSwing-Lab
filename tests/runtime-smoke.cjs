@@ -8,9 +8,13 @@ const makeElement = () => ({
   textContent: "", value: "", checked: false, disabled: false, innerHTML: "",
   className: "", style: {}, children: [], clientWidth: 400, clientHeight: 190,
   classList: { add() {}, remove() {}, toggle() {} },
-  appendChild(child) { this.children.push(child); },
-  prepend(child) { this.children.unshift(child); },
-  remove() {}, click() {},
+  appendChild(child) { child.parent = this; this.children.push(child); },
+  prepend(child) { child.parent = this; this.children.unshift(child); },
+  get lastChild() { return this.children.at(-1); },
+  remove() {
+    if (this.parent) this.parent.children = this.parent.children.filter((child) => child !== this);
+  },
+  click() {},
   getContext() {
     return {
       setTransform() {}, clearRect() {}, beginPath() {}, moveTo() {},
@@ -85,4 +89,20 @@ if (elements.summaryInRate.textContent === "--" || elements.summaryRelation.text
 if (elements.coachTitle.textContent.includes("标记落点")) {
   throw new Error("Latest-shot conclusion did not react to its landing mark");
 }
-console.log(`Runtime smoke OK: ${ids.length} elements, ${outcomes.length} hits, conclusions, and session insights`);
+elements.endSession.onclick();
+elements.startSession.onclick();
+for (let shot = 0; shot < 3; shot += 1) {
+  for (let i = 0; i < 25; i += 1) sample(1, 0);
+  for (let i = 0; i < 10; i += 1) sample(i === 5 ? 3 : 1.3, 5);
+  for (let i = 0; i < 15; i += 1) sample(1, 0);
+}
+if (!elements.summarySample.textContent.includes("0 次已标记") || elements.summaryInRate.textContent !== "--") {
+  throw new Error("Unmarked strokes were incorrectly treated as landing results");
+}
+if (!elements.summaryPattern.textContent.includes("纯动作模式") || !elements.summaryRelation.textContent.includes("没有标记落点")) {
+  throw new Error("Motion-only session insights were not generated");
+}
+if (!elements.coachReliability.textContent.includes("仅动作结论")) {
+  throw new Error("Unmarked latest-shot conclusion was not labelled motion-only");
+}
+console.log(`Runtime smoke OK: ${ids.length} elements, marked conclusions, and unmarked motion-only insights`);

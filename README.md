@@ -49,6 +49,10 @@ The table-tennis dashboard provides:
 The dashboard keeps raw measurements separate from derived conclusions. After
 each landing is marked, it combines face orientation, swing direction, vertical
 path, and result to suggest the most likely adjustment for the next stroke.
+Landing marks are optional: unmarked strokes still receive motion-only analysis
+for target-angle error, face/path separation, peak-speed timing, return to ready,
+confidence, and session repeatability. They are never counted as misses and are
+excluded from in-rate and landing-correlation calculations.
 
 For a session, it derives marked-ball in-rate, return-to-ready rate, detection
 confidence, and an internal repeatability score from angle, direction, and
