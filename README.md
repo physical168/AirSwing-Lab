@@ -44,6 +44,19 @@ The table-tennis dashboard provides:
   angle charts.
 - A hybrid iPad shell that loads the LAN dashboard and keeps an offline copy.
 
+## Derived Insights
+
+The dashboard keeps raw measurements separate from derived conclusions. After
+each landing is marked, it combines face orientation, swing direction, vertical
+path, and result to suggest the most likely adjustment for the next stroke.
+
+For a session, it derives marked-ball in-rate, return-to-ready rate, detection
+confidence, and an internal repeatability score from angle, direction, and
+estimated speed variation. With at least six marked strokes it also reports the
+strongest personal association between face/path measurements and landing
+location. These associations are descriptive and must not be read as proof of
+causation.
+
 ## Calibration Order
 
 Keep the AirPod fixed to the racket handle cap throughout calibration and play.
